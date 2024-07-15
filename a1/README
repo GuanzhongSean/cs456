@@ -1,0 +1,78 @@
+# CS456 Assignment 1
+
+## Overview
+
+This assignment involves implementing a client and server using Python to handle file transfers over UDP and TCP. The server was hosted on `ubuntu2204-014.student.cs.uwaterloo.ca` and the client was tested on `ubuntu2204-002.student.cs.uwaterloo.ca`.
+
+## Setup and Execution
+
+### Version
+
+- Python 3.10.12
+
+### Server Setup
+
+1. **Run the Server**
+   ```sh
+   ./server.sh <req_code>
+   ```
+   - Replace `<req_code>` with the required request code. Example:
+     ```sh
+     ./server.sh 1234
+     ```
+   - The server will print the `SERVER_PORT` which is used by the client for UDP negotiation.
+
+### Client Setup
+
+1. **Run the Client**
+
+   ```sh
+   ./client.sh <server_address> <n_port> <req_code> <proto> <filename>
+   ```
+
+   - `<server_address>`: The server's hostname or IP address (e.g., `ubuntu2204-014.student.cs.uwaterloo.ca`).
+   - `<n_port>`: The negotiation port printed by the server.
+   - `<req_code>`: The request code used to start the server.
+   - `<proto>`: The protocol to count (`TCP`, `UDP`, or `TCPUDP`).
+   - `<filename>`: The filename of the trace file to be sent (e.g., `sample_trace.json`).
+
+   Example:
+
+   ```sh
+   ./client.sh ubuntu2204-014.student.cs.uwaterloo.ca 55335 1234 TCP sample_trace.json
+   ```
+
+## Example Workflow
+
+1. **Start the Server on `ubuntu2204-014.student.cs.uwaterloo.ca`:**
+
+   ```sh
+   ./server.sh 1234
+   ```
+
+   Output:
+
+   ```
+   SERVER_PORT=55335
+   ```
+
+2. **Run the Client on `ubuntu2204-002.student.cs.uwaterloo.ca`:**
+
+   ```sh
+   ./client.sh ubuntu2204-014.student.cs.uwaterloo.ca 55335 1234 TCPUDP sample_trace.json
+   ```
+
+   Output:
+
+   ```
+   TCP=36
+   UDP=2
+   ```
+
+## Student Info
+
+**Name:** Jiaze Xiao
+
+**Student Number:** 20933691
+
+**Email:** j76xiao@uwaterloo.ca
