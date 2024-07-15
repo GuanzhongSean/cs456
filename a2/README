@@ -1,0 +1,85 @@
+# CS456-A2 nEmulator
+
+## Overview
+
+The `Network Emulator` was hosted on `ubuntu2204-014.student.cs.uwaterloo.ca`, the `Sender` was tested on `ubuntu2204-002.student.cs.uwaterloo.ca` and the `Receiver` was tested on `ubuntu2204-004.student.cs.uwaterloo.ca`.
+
+## Usage
+
+### Network Emulator
+
+Parameters:
+
+• `<emulator's receiving UDP port number in the forward (sender) direction>`
+
+• `<receiver's network address>`
+
+• `<receiver's receiving UDP port number>`
+
+• `<emulator's receiving UDP port number in the backward (receiver) direction>`
+
+• `<sender's network address>`
+
+• `<sender's receiving UDP port number>`
+
+• `<maximum delay of the link in units of millisecond>`
+
+• `<packet discard probability>`
+
+• `<verbose-mode>`
+
+Example:
+
+```sh
+$ ./nEmulator 50001 ubuntu2204-004.student.cs.uwaterloo.ca 50004 50003 ubuntu2204-002.student.cs.uwaterloo.ca 50002 800 0.2 1
+```
+
+### Sender
+
+Parameters:
+
+• `<host address of the network emulator>`
+
+• `<UDP port number used by the emulator to receive data from the sender>`
+
+• `<UDP port number used by the sender to receive ACKs from the emulator>`
+
+• `<timeout interval in units of millisecond>`
+
+• `<N: transmission window size>`
+
+• `<name of the file to be transferred>`
+
+Example:
+
+```sh
+$ python sender.py ubuntu2204-014.student.cs.uwaterloo.ca 50001 50002 1000 5 test.txt
+```
+
+### Receiver
+
+Parameters:
+
+• `<hostname for the network emulator>`
+
+• `<UDP port number used by the link emulator to receive ACKs from the receiver>`
+
+• `<UDP port number used by the receiver to receive data from the emulator>`
+
+• `<F: buffer size>`
+
+• `<name of the file into which the received data is written>`
+
+Example:
+
+```sh
+$ python receiver.py ubuntu2204-014.student.cs.uwaterloo.ca 50003 50004 6 output
+```
+
+## Student Info
+
+**Name:** Jiaze Xiao
+
+**Student Number:** 20933691
+
+**Email:** j76xiao@uwaterloo.ca
