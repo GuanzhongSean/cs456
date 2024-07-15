@@ -1,0 +1,9 @@
+partC.*
+!partC.tex
+__pycache__/
+*.log
+output
+CS456-A3-j76xiao.zip
+j76xiao/
+.git/
+part-D/a3.py
