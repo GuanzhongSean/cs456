@@ -56,6 +56,21 @@ def run():
     carol.intf('carol-eth0').setIP('10.6.6.69', 24)
     carol.intf('carol-eth0').setMAC('cc:cc:cc:cc:cc:cc')
 
+    r1 = net.get('r1')
+    r1.intf( 'r1-eth1' ).setMAC( 'aa:aa:aa:aa:aa:00' )
+    r1.intf( 'r1-eth2' ).setMAC( 'aa:aa:aa:aa:aa:01' )
+    r1.intf( 'r1-eth3' ).setMAC( 'aa:aa:aa:aa:aa:02' )
+
+    r2 = net.get('r2')
+    r2.intf( 'r2-eth1' ).setMAC( 'b0:b0:b0:b0:b0:00' )
+    r2.intf( 'r2-eth2' ).setMAC( 'b0:b0:b0:b0:b0:01' )
+    r2.intf( 'r2-eth3' ).setMAC( 'b0:b0:b0:b0:b0:02' )
+
+    r3 = net.get('r3')
+    r3.intf( 'r3-eth1' ).setMAC( 'cc:cc:cc:cc:cc:00' )
+    r3.intf( 'r3-eth2' ).setMAC( 'cc:cc:cc:cc:cc:01' )
+    r3.intf( 'r3-eth3' ).setMAC( 'cc:cc:cc:cc:cc:02' )
+
     net.start()
 
     # Add routing table entries for hosts

@@ -39,13 +39,6 @@ class RawSocketListener():
 def l2_handler(message, middlebox_port, iface_name, blacklist):
     eth_frame = Ether(message)
     if eth_frame.haslayer(UDP) and eth_frame[UDP].dport == middlebox_port and eth_frame[IP].ttl == 64:
-        payload = eth_frame[Raw].load.decode("utf-8")
-
-        banned_word_found = next((word for word in blacklist if word in payload), None)
-        if banned_word_found:
-            print(f"Dropping the packet due to banned word '{banned_word_found}' in payload")
-            return
-
         print(f"Received a UDP packet with destination port {middlebox_port}")
         eth_frame[IP].ttl -= 1
         eth_frame[IP].chksum = None
@@ -54,12 +47,20 @@ def l2_handler(message, middlebox_port, iface_name, blacklist):
         eth_frame[UDP].len = None
         eth_frame = Ether(bytes(eth_frame))
         eth_frame.show2()
+
+        payload = eth_frame[Raw].load.decode("utf-8")
+        banned_word_found = next((word for word in blacklist if word in payload), None)
+        if banned_word_found:
+            print(f"Dropping the packet due to banned word '{banned_word_found}' in payload")
+            return
+
         print(f"Sending the packet: "
               f"{eth_frame[IP].src}:{eth_frame[UDP].sport} -> "
               f"{eth_frame[IP].dst}:{eth_frame[UDP].dport}")
         sendp(eth_frame, iface=iface_name)
 
 
+# Original l2_handler function
 def l2_handler0(message, middlebox_port, iface_name):
     eth_frame = Ether(message)
     if eth_frame.haslayer(UDP) and eth_frame[UDP].dport == middlebox_port\

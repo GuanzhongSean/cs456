@@ -279,66 +279,43 @@ def install_udp_middlebox_flow(source_dpid, destination_dpid, middlebox_dpid, so
     #
     # But remember that your code had to work for _any loopfree_ topology so
     # don't make it specific to this example!
+
+    # Get the network topology
     g = get_networkx_topology_graph()
 
+    # Get the MAC addresses of the hosts
     client_mac = get_host_mac_from_dpid(source_dpid)
-    middlebox_mac = get_host_mac_from_dpid(middlebox_dpid)
     server_mac = get_host_mac_from_dpid(destination_dpid)
 
+    # Get the IP addresses of the hosts
     client_ip = get_host_ip_from_dpid(source_dpid)
-    middlebox_ip = get_host_ip_from_dpid(middlebox_dpid)
     server_ip = get_host_ip_from_dpid(destination_dpid)
 
     # Path from client to middlebox
     path1 = get_shortest_path_between(g, source_dpid, middlebox_dpid)
+
     # Path from middlebox to server
     path2 = get_shortest_path_between(g, middlebox_dpid, destination_dpid)
 
-    # Install flow rules from client to middlebox
-    for i in range(len(path1) - 1):
-        dpid = path1[i]
-        next_dpid = path1[i + 1]
-        if i == 0:
-            in_port = get_host_port(source_dpid)
-        else:
-            in_port = get_input_port(path1, dpid)
-        out_port, _ = get_ports_connecting(dpid, next_dpid)
+    # Install flow rules for the two paths
+    for path in [path1, path2]:
+        for i in range(len(path)):
+            dpid = path[i]
+            in_port = get_input_port(path, dpid)
+            out_port = None
 
-        match = build_match_for(client_mac, server_mac, client_ip,
-                                server_ip, source_port, destination_port, in_port)
-        flowmod = build_openflow_flowmod(match, out_port)
-        install_flowmod_on_switch_with_dpid(flowmod, dpid)
+            if i == len(path) - 1:
+                # Last hop in the path
+                out_port = get_host_port(dpid)
+            else:
+                next_dpid = path[i + 1]
+                out_port, _ = get_ports_connecting(dpid, next_dpid)
 
-    # Install flow rule at the middlebox switch to forward traffic to middlebox host
-    in_port = get_input_port(path1, middlebox_dpid)
-    out_port = get_host_port(middlebox_dpid)
-    match = build_match_for(client_mac, server_mac, client_ip,
-                            server_ip, source_port, destination_port, in_port)
-    flowmod = build_openflow_flowmod(match, out_port)
-    install_flowmod_on_switch_with_dpid(flowmod, middlebox_dpid)
-
-    # Install flow rules from middlebox switch to server
-    for i in range(len(path2) - 1):
-        dpid = path2[i]
-        next_dpid = path2[i + 1]
-        if i == 0:
-            in_port = get_host_port(middlebox_dpid)
-        else:
-            in_port = get_input_port(path2, dpid)
-        out_port, _ = get_ports_connecting(dpid, next_dpid)
-
-        match = build_match_for(middlebox_mac, server_mac, middlebox_ip,
-                                server_ip, source_port, destination_port, in_port)
-        flowmod = build_openflow_flowmod(match, out_port)
-        install_flowmod_on_switch_with_dpid(flowmod, dpid)
-
-    # Install flow rule at the server to forward traffic to the correct host port
-    in_port = get_input_port(path2, destination_dpid)
-    out_port = get_host_port(destination_dpid)
-    match = build_match_for(middlebox_mac, server_mac, middlebox_ip,
-                            server_ip, source_port, destination_port, in_port)
-    flowmod = build_openflow_flowmod(match, out_port)
-    install_flowmod_on_switch_with_dpid(flowmod, destination_dpid)
+            # Build the match and flowmod
+            match = build_match_for(client_mac, server_mac, client_ip,
+                                    server_ip, source_port, destination_port, in_port)
+            flowmod = build_openflow_flowmod(match, out_port)
+            install_flowmod_on_switch_with_dpid(flowmod, dpid)
 
     log.info("Installed UDP middlebox flow rules from %s to %s via %s",
              source_dpid, destination_dpid, middlebox_dpid)
@@ -356,8 +333,8 @@ def do_install():
     """
 
     source_dpid = 1
-    destination_dpid = 3
-    middlebox_dpid = 2
+    destination_dpid = 4
+    middlebox_dpid = 7
     source_port = 50000
     destination_port = 50001
     install_udp_middlebox_flow(source_dpid, destination_dpid, middlebox_dpid,

@@ -15,18 +15,18 @@ done
 ofctl='ovs-ofctl -O OpenFlow13'
 
 # OVS rules for alice <-> bob
-$ofctl add-flow r1 "ip,nw_src=10.1.1.17,nw_dst=10.4.4.48,actions=output:2"
-$ofctl add-flow r1 "ip,nw_src=10.4.4.48,nw_dst=10.1.1.17,actions=mod_dl_dst:aa:aa:aa:aa:aa:aa,output=1"
+$ofctl add-flow r1 "ip,nw_src=10.1.1.17,nw_dst=10.4.4.48,actions=mod_dl_src:aa:aa:aa:aa:aa:01,mod_dl_dst:b0:b0:b0:b0:b0:01,output=2"
+$ofctl add-flow r1 "ip,nw_src=10.4.4.48,nw_dst=10.1.1.17,actions=mod_dl_src:aa:aa:aa:aa:aa:00,mod_dl_dst:aa:aa:aa:aa:aa:aa,output=1"
 
-$ofctl add-flow r2 "ip,nw_src=10.1.1.17,nw_dst=10.4.4.48,actions=mod_dl_dst:b0:b0:b0:b0:b0:b0,output=1"
-$ofctl add-flow r2 "ip,nw_src=10.4.4.48,nw_dst=10.1.1.17,actions=output:2"
+$ofctl add-flow r2 "ip,nw_src=10.1.1.17,nw_dst=10.4.4.48,actions=mod_dl_src:b0:b0:b0:b0:b0:00,mod_dl_dst:b0:b0:b0:b0:b0:b0,output=1"
+$ofctl add-flow r2 "ip,nw_src=10.4.4.48,nw_dst=10.1.1.17,actions=mod_dl_src:b0:b0:b0:b0:b0:01,mod_dl_dst:aa:aa:aa:aa:aa:01,output=2"
 
 # OVS rules for bob <-> carol
-$ofctl add-flow r2 "ip,nw_src=10.4.4.48,nw_dst=10.6.6.69,actions=output:3"
-$ofctl add-flow r2 "ip,nw_src=10.6.6.69,nw_dst=10.4.4.48,actions=mod_dl_dst:b0:b0:b0:b0:b0:b0,output=1"
+$ofctl add-flow r2 "ip,nw_src=10.4.4.48,nw_dst=10.6.6.69,actions=mod_dl_src:b0:b0:b0:b0:b0:02,mod_dl_dst:cc:cc:cc:cc:cc:02,output=3"
+$ofctl add-flow r2 "ip,nw_src=10.6.6.69,nw_dst=10.4.4.48,actions=mod_dl_src:b0:b0:b0:b0:b0:00,mod_dl_dst:b0:b0:b0:b0:b0:b0,output=1"
 
-$ofctl add-flow r3 "ip,nw_src=10.4.4.48,nw_dst=10.6.6.69,actions=mod_dl_dst:cc:cc:cc:cc:cc:cc,output=1"
-$ofctl add-flow r3 "ip,nw_src=10.6.6.69,nw_dst=10.4.4.48,actions=output:3"
+$ofctl add-flow r3 "ip,nw_src=10.4.4.48,nw_dst=10.6.6.69,actions=mod_dl_src:cc:cc:cc:cc:cc:00,mod_dl_dst:cc:cc:cc:cc:cc:cc,output=1"
+$ofctl add-flow r3 "ip,nw_src=10.6.6.69,nw_dst=10.4.4.48,actions=mod_dl_src:cc:cc:cc:cc:cc:02,mod_dl_dst:b0:b0:b0:b0:b0:02,output=3"
 
 # Ensure alice and carol disconnect
 $ofctl add-flow r1 "ip,nw_src=10.1.1.17,nw_dst=10.6.6.69,actions=drop"

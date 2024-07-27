@@ -31,7 +31,7 @@ class UdpListener():
 
 def print_handler(message, source):
     message = message.decode("utf-8")
-    print(f"Received message {message} from {source}")
+    print(f"Received message \"{message}\" from {source}")
 
 
 def main():
